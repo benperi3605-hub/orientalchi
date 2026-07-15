@@ -411,13 +411,16 @@
       }, 600);
       return;
     }
+    var fd = new FormData();
+    fd.append("_subject", "New booking request: " + svc + " — " + when);
+    fd.append("Name", name);
+    fd.append("Phone", phone);
+    fd.append("Service", svc);
+    fd.append("When", when);
     fetch("https://formsubmit.co/ajax/" + encodeURIComponent(BOOKING_EMAIL), {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({
-        _subject: "New booking request: " + svc + " — " + when,
-        Name: name, Phone: phone, Service: svc, When: when
-      })
+      headers: { "Accept": "application/json" },
+      body: fd
     }).then(function (r) { return r.json(); }).then(function () {
       confirmScreen("We'll call you at " + phone + " to confirm your appointment.");
     }).catch(function () {
