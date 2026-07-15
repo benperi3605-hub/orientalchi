@@ -263,10 +263,12 @@
 <script>
 (function () {
   // ===== CONFIGURATION =====
-  // Set this to the business email to receive booking requests.
-  // Bookings are delivered via formsubmit.co (first submission triggers a
-  // one-time activation email to this address — click the link in it once).
-  var BOOKING_EMAIL = "ben.peri3605@gmail.com";
+  // Bookings are delivered via a Google Form on the owner's Google account
+  // (ben.peri3605@gmail.com). Google emails each new response and logs it in
+  // the form's Responses tab. To change the destination, transfer the form or
+  // update the notification settings inside Google Forms.
+  var GFORM_ID = "1FAIpQLSfdLy2t7_24pdpRzQ72t1Wmcn-r44lgRknV7mzkFgenfT12LA";
+  var GFORM_ENTRIES = { name: "entry.802541406", phone: "entry.1014853564", service: "entry.1669099375", when: "entry.787067658" };
   var LEAD_TIME_MIN = 60;      // minimum notice before a slot, in minutes
   var SLOT_STEP_MIN = 30;      // slot granularity
   var DAYS_AHEAD    = 14;      // how many days out can be booked
@@ -404,24 +406,17 @@
         "<p style='margin-top:0.8rem;color:#8a7a68;'>" + note + "</p></div>";
     }
 
-    if (!BOOKING_EMAIL) {
-      // Email destination not configured yet — show confirmation only.
-      setTimeout(function () {
-        confirmScreen("We'll call you at " + phone + " to confirm your appointment.");
-      }, 600);
-      return;
-    }
-    var fd = new FormData();
-    fd.append("_subject", "New booking request: " + svc + " — " + when);
-    fd.append("Name", name);
-    fd.append("Phone", phone);
-    fd.append("Service", svc);
-    fd.append("When", when);
-    fetch("https://formsubmit.co/ajax/" + encodeURIComponent(BOOKING_EMAIL), {
+    var params = new URLSearchParams();
+    params.append(GFORM_ENTRIES.name, name);
+    params.append(GFORM_ENTRIES.phone, phone);
+    params.append(GFORM_ENTRIES.service, svc);
+    params.append(GFORM_ENTRIES.when, when);
+    fetch("https://docs.google.com/forms/d/e/" + GFORM_ID + "/formResponse", {
       method: "POST",
-      headers: { "Accept": "application/json" },
-      body: fd
-    }).then(function (r) { return r.json(); }).then(function () {
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString()
+    }).then(function () {
       confirmScreen("We'll call you at " + phone + " to confirm your appointment.");
     }).catch(function () {
       confirmScreen("If you don't hear from us shortly, please call (954) 450-5404 to confirm.");
