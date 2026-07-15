@@ -104,6 +104,30 @@
   .info-block a { color: var(--red); font-weight: bold; text-decoration: none; }
   .info-block .big-phone { font-size: 1.5rem; display: inline-block; margin: 0.3rem 0 0.8rem; }
 
+  .book-wrap { background: #fff; border-radius: 12px; box-shadow: 0 2px 14px rgba(91,58,30,0.14); padding: 2rem; max-width: 760px; margin: 0 auto; }
+  .book-step { margin-bottom: 1.6rem; }
+  .book-step h3 { color: var(--brown); font-size: 1rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.7rem; }
+  .book-step h3 span { color: var(--red); }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip { border: 1.5px solid var(--cream-dark); background: var(--cream); color: var(--text); border-radius: 8px; padding: 0.5rem 0.85rem; font-family: inherit; font-size: 0.92rem; cursor: pointer; transition: all 0.15s; line-height: 1.25; }
+  .chip small { display: block; color: #8a7a68; font-size: 0.78rem; }
+  .chip:hover:not(:disabled) { border-color: var(--red); }
+  .chip.sel { background: var(--red); border-color: var(--red); color: #fff; }
+  .chip.sel small { color: #f3d9d9; }
+  .chip:disabled { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+  .date-row { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.4rem; }
+  .date-row .chip { flex: 0 0 auto; text-align: center; min-width: 74px; }
+  .slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 0.5rem; }
+  .book-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  @media (max-width: 560px) { .book-fields { grid-template-columns: 1fr; } }
+  .book-fields input { font-family: inherit; font-size: 1rem; padding: 0.7rem 0.9rem; border: 1.5px solid var(--cream-dark); border-radius: 8px; background: var(--cream); color: var(--text); width: 100%; }
+  .book-fields input:focus { outline: none; border-color: var(--red); }
+  .book-submit { display: block; width: 100%; margin-top: 1.4rem; background: var(--red); color: #fff; border: none; border-radius: 999px; padding: 0.95rem; font-family: inherit; font-size: 1.05rem; font-weight: bold; cursor: pointer; }
+  .book-submit:hover:not(:disabled) { background: var(--red-dark); }
+  .book-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .book-summary { text-align: center; font-size: 0.95rem; color: #8a7a68; margin-top: 0.8rem; min-height: 1.4em; }
+  .book-confirm { text-align: center; padding: 2.5rem 1rem; }
+  .book-confirm h3 { color: var(--red); font-size: 1.5rem; margin-bottom: 0.6rem; font-style: italic; }
   .review-band { background: var(--red); color: #fff; text-align: center; padding: 3rem 1.2rem; }
   .review-band h2 { color: #fff; }
   .review-band .rule { background: #fff; }
@@ -122,6 +146,7 @@
   <div class="brand">Oriental Chi<small>Relaxation Massage</small></div>
   <nav>
     <a href="#services">Services</a>
+    <a href="#book">Book</a>
     <a href="#visit">Hours &amp; Location</a>
     <a href="tel:+19544505404" class="call-btn">(954) 450-5404</a>
   </nav>
@@ -132,8 +157,8 @@
   <p class="tag">Relaxation Massage</p>
   <p class="sub">Take a break from shopping and melt the stress away. Traditional chair massage, foot reflexology, and full body massage inside Pembroke Lakes Mall — next to Dillard's. Walk-ins welcome, no appointment needed.</p>
   <div class="cta">
-    <a class="primary" href="tel:+19544505404">Call (954) 450-5404</a>
-    <a class="secondary" href="#services">View Services</a>
+    <a class="primary" href="#book">Book an Appointment</a>
+    <a class="secondary" href="tel:+19544505404">Call (954) 450-5404</a>
   </div>
 </div>
 
@@ -195,6 +220,34 @@
   </div>
 </section>
 
+<section id="book">
+  <h2>Book an Appointment</h2>
+  <div class="rule"></div>
+  <div class="book-wrap" id="bookWrap">
+    <div class="book-step">
+      <h3><span>1.</span> Choose a service</h3>
+      <div class="chip-row" id="svcRow"></div>
+    </div>
+    <div class="book-step">
+      <h3><span>2.</span> Pick a date</h3>
+      <div class="date-row" id="dateRow"></div>
+    </div>
+    <div class="book-step">
+      <h3><span>3.</span> Pick a time</h3>
+      <div class="slot-grid" id="slotGrid"></div>
+    </div>
+    <div class="book-step">
+      <h3><span>4.</span> Your details</h3>
+      <div class="book-fields">
+        <input type="text" id="bkName" placeholder="Full name" autocomplete="name">
+        <input type="tel" id="bkPhone" placeholder="Phone number" autocomplete="tel">
+      </div>
+    </div>
+    <button class="book-submit" id="bkSubmit" disabled>Request Appointment</button>
+    <p class="book-summary" id="bkSummary"></p>
+  </div>
+</section>
+
 <div class="review-band">
   <h2>Enjoyed Your Massage?</h2>
   <div class="rule"></div>
@@ -207,5 +260,173 @@
   <p>&copy; 2026 Oriental Chi Massage. All rights reserved.</p>
 </footer>
 
+<script>
+(function () {
+  // ===== CONFIGURATION =====
+  // Set this to the business email to receive booking requests.
+  // Bookings are delivered via formsubmit.co (first submission triggers a
+  // one-time activation email to this address — click the link in it once).
+  var BOOKING_EMAIL = ""; // e.g. "orientalchimassage@gmail.com"
+  var LEAD_TIME_MIN = 60;      // minimum notice before a slot, in minutes
+  var SLOT_STEP_MIN = 30;      // slot granularity
+  var DAYS_AHEAD    = 14;      // how many days out can be booked
+  // Hours: [open, close] in 24h; Sunday is index 0.
+  var HOURS = { 0: [11, 18], 1: [11, 20], 2: [11, 20], 3: [11, 20], 4: [11, 20], 5: [11, 20], 6: [11, 20] };
+
+  var SERVICES = [
+    { id: "chair10", label: "Chair Massage", mins: 10, price: 12 },
+    { id: "chair15", label: "Chair Massage", mins: 15, price: 18 },
+    { id: "chair20", label: "Chair Massage", mins: 20, price: 22 },
+    { id: "chair30", label: "Chair Massage", mins: 30, price: 32 },
+    { id: "table10", label: "Table Massage", mins: 10, price: 15 },
+    { id: "table20", label: "Table Massage", mins: 20, price: 25 },
+    { id: "table30", label: "Table Massage", mins: 30, price: 35 },
+    { id: "table60", label: "Table Massage", mins: 60, price: 65 },
+    { id: "foot20",  label: "Foot Massage",  mins: 20, price: 25 },
+    { id: "foot30",  label: "Foot Massage",  mins: 30, price: 35 },
+    { id: "foot60",  label: "Foot Massage",  mins: 60, price: 65 }
+  ];
+
+  var state = { svc: null, date: null, time: null };
+  var svcRow = document.getElementById("svcRow");
+  var dateRow = document.getElementById("dateRow");
+  var slotGrid = document.getElementById("slotGrid");
+  var submitBtn = document.getElementById("bkSubmit");
+  var summary = document.getElementById("bkSummary");
+
+  var DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  function fmtTime(mins) {
+    var h = Math.floor(mins / 60), m = mins % 60, ap = h >= 12 ? "PM" : "AM";
+    var h12 = h % 12 === 0 ? 12 : h % 12;
+    return h12 + ":" + (m < 10 ? "0" : "") + m + " " + ap;
+  }
+
+  function renderServices() {
+    SERVICES.forEach(function (s) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip";
+      b.innerHTML = s.label + " · " + s.mins + " min<small>$" + s.price + "</small>";
+      b.onclick = function () {
+        state.svc = s; state.time = null;
+        [].forEach.call(svcRow.children, function (c) { c.classList.remove("sel"); });
+        b.classList.add("sel");
+        renderSlots(); update();
+      };
+      svcRow.appendChild(b);
+    });
+  }
+
+  function renderDates() {
+    var today = new Date();
+    for (var i = 0; i < DAYS_AHEAD; i++) {
+      var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+      (function (d, i) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "chip";
+        b.innerHTML = (i === 0 ? "Today" : DOW[d.getDay()]) + "<small>" + MON[d.getMonth()] + " " + d.getDate() + "</small>";
+        b.onclick = function () {
+          state.date = d; state.time = null;
+          [].forEach.call(dateRow.children, function (c) { c.classList.remove("sel"); });
+          b.classList.add("sel");
+          renderSlots(); update();
+        };
+        dateRow.appendChild(b);
+      })(d, i);
+    }
+  }
+
+  function renderSlots() {
+    slotGrid.innerHTML = "";
+    if (!state.date) {
+      slotGrid.innerHTML = "<p style='grid-column:1/-1;color:#8a7a68;font-style:italic;'>Select a date to see available times.</p>";
+      return;
+    }
+    var hrs = HOURS[state.date.getDay()];
+    var open = hrs[0] * 60, close = hrs[1] * 60;
+    var dur = state.svc ? state.svc.mins : SLOT_STEP_MIN;
+    var now = new Date();
+    var isToday = state.date.toDateString() === now.toDateString();
+    var cutoff = now.getHours() * 60 + now.getMinutes() + LEAD_TIME_MIN;
+    var any = false;
+    for (var t = open; t + dur <= close; t += SLOT_STEP_MIN) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = fmtTime(t);
+      var unavailable = isToday && t < cutoff;
+      if (unavailable) { b.disabled = true; b.title = "Unavailable"; }
+      else {
+        any = true;
+        (function (t, b) {
+          b.onclick = function () {
+            state.time = t;
+            [].forEach.call(slotGrid.children, function (c) { c.classList.remove("sel"); });
+            b.classList.add("sel");
+            update();
+          };
+        })(t, b);
+      }
+      slotGrid.appendChild(b);
+    }
+    if (!any && isToday) {
+      var p = document.createElement("p");
+      p.style.cssText = "grid-column:1/-1;color:#8a7a68;font-style:italic;";
+      p.textContent = "No more openings today — pick another day, or walk in any time before close.";
+      slotGrid.appendChild(p);
+    }
+  }
+
+  function update() {
+    var name = document.getElementById("bkName").value.trim();
+    var phone = document.getElementById("bkPhone").value.trim();
+    var ready = state.svc && state.date && state.time !== null && name && phone;
+    submitBtn.disabled = !ready;
+    if (state.svc && state.date && state.time !== null) {
+      summary.textContent = state.svc.label + " (" + state.svc.mins + " min, $" + state.svc.price + ") — " +
+        DOW[state.date.getDay()] + ", " + MON[state.date.getMonth()] + " " + state.date.getDate() + " at " + fmtTime(state.time);
+    } else { summary.textContent = ""; }
+  }
+  document.getElementById("bkName").addEventListener("input", update);
+  document.getElementById("bkPhone").addEventListener("input", update);
+
+  submitBtn.onclick = function () {
+    var name = document.getElementById("bkName").value.trim();
+    var phone = document.getElementById("bkPhone").value.trim();
+    var when = DOW[state.date.getDay()] + ", " + MON[state.date.getMonth()] + " " + state.date.getDate() +
+      ", " + state.date.getFullYear() + " at " + fmtTime(state.time);
+    var svc = state.svc.label + " — " + state.svc.mins + " min ($" + state.svc.price + ")";
+    submitBtn.disabled = true; submitBtn.textContent = "Sending…";
+
+    function confirmScreen(note) {
+      document.getElementById("bookWrap").innerHTML =
+        "<div class='book-confirm'><h3>Request Received</h3>" +
+        "<p><strong>" + svc + "</strong><br>" + when + "<br>for " + name + "</p>" +
+        "<p style='margin-top:0.8rem;color:#8a7a68;'>" + note + "</p></div>";
+    }
+
+    if (!BOOKING_EMAIL) {
+      // Email destination not configured yet — show confirmation only.
+      setTimeout(function () {
+        confirmScreen("We'll call you at " + phone + " to confirm your appointment.");
+      }, 600);
+      return;
+    }
+    fetch("https://formsubmit.co/ajax/" + encodeURIComponent(BOOKING_EMAIL), {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        _subject: "New booking request: " + svc + " — " + when,
+        Name: name, Phone: phone, Service: svc, When: when
+      })
+    }).then(function (r) { return r.json(); }).then(function () {
+      confirmScreen("We'll call you at " + phone + " to confirm your appointment.");
+    }).catch(function () {
+      confirmScreen("If you don't hear from us shortly, please call (954) 450-5404 to confirm.");
+    });
+  };
+
+  renderServices(); renderDates(); renderSlots();
+})();
+</script>
 </body>
 </html>
