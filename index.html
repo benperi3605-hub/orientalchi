@@ -138,6 +138,40 @@
 
   footer { background: var(--brown); color: var(--cream); text-align: center; padding: 1.6rem 1.2rem; font-size: 0.85rem; }
   footer a { color: var(--cream); }
+
+  /* ===== Mobile layout (phones) ===== */
+  @media (max-width: 640px) {
+    header { flex-direction: column; align-items: center; text-align: center; padding: 0.65rem 0.8rem 0.7rem; gap: 0.45rem; }
+    header .brand { font-size: 1.25rem; }
+    nav { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.4rem 1rem; width: 100%; }
+    nav a { margin-left: 0; font-size: 0.9rem; }
+    .call-btn { padding: 0.35rem 0.9rem; font-size: 0.9rem; }
+
+    .hero { padding: 3.2rem 1.3rem 3.6rem; }
+    .hero p.sub { font-size: 1.02rem; }
+    .hero .cta { flex-direction: column; align-items: center; gap: 0.7rem; margin-top: 1.6rem; }
+    .hero .cta a { width: 100%; max-width: 300px; text-align: center; box-sizing: border-box; }
+
+    section { padding: 2.6rem 1rem; }
+    h2 { font-size: 1.6rem; }
+
+    .card { padding: 1.25rem; }
+    .why-wrap { gap: 1.8rem; padding: 0 0.5rem; }
+
+    .visit-grid { gap: 1.2rem; }
+    .visit-grid iframe { height: 260px; }
+    .info-block { text-align: center; }
+    .info-block ul { max-width: 320px; margin-left: auto; margin-right: auto; }
+
+    .book-wrap { padding: 1.3rem 1rem; border-radius: 10px; }
+    .slot-grid { grid-template-columns: repeat(3, 1fr); }
+    .chip { padding: 0.55rem 0.7rem; font-size: 0.9rem; }
+    .date-row .chip { min-width: 68px; }
+    .book-summary { font-size: 0.9rem; }
+
+    .review-band { padding: 2.4rem 1.2rem; }
+    footer { font-size: 0.8rem; line-height: 1.7; }
+  }
 </style>
 </head>
 <body>
